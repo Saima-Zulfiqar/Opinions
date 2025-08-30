@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Second Opinion Reports - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #34495e;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab-button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Report styling */
+        .report-header {
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .institution-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .department {
+            font-size: 1.2rem;
+            color: #34495e;
+            margin-bottom: 0.5rem;
+        }
+
+        .address {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .report-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .patient-info {
+            background: #ecf0f1;
+            padding: 1.5rem;
+            border-left: 4px solid #3498db;
+            border-radius: 5px;
+        }
+
+        .patient-info ul, .clinical-summary ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .patient-info li, .clinical-summary li {
+            margin-bottom: 0.5rem;
+        }
+
+        .opinion-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .opinion-section h4 {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            font-weight: bold;
+        }
+
+        .conclusion {
+            background: #e8f6f3;
+            padding: 1.5rem;
+            border-left: 4px solid #27ae60;
+            margin: 2rem 0;
+            border-radius: 5px;
+        }
+
+        .conclusion ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .signature {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #bdc3c7;
+        }
+
+        .signature-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .disclaimer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fef9e7;
+            border: 1px solid #f39c12;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #d68910;
+        }
+
+        .date {
+            text-align: right;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+        }
+
+        .ref-number {
+            text-align: right;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Comparison table styling */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .comparison-table th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison-table tr:hover {
+            background: #e8f4f8;
+        }
+
+        .analysis-section {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .consensus-highlight {
+            background: #d5f4e6;
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid #27ae60;
+            margin: 1rem 0;
+        }
+
+        .divergence-highlight {
+            background: #fadbd8;
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+            margin: 1rem 0;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        /* Enhanced Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+                line-height: 1.2;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                background: #34495e;
+            }
+            
+            .tab-button {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+                text-align: left;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            
+            .tab-button:last-child {
+                border-bottom: none;
+            }
+            
+            .tab-content {
+                padding: 1rem;
+            }
+            
+            .report-header {
+                margin-bottom: 1.5rem;
+            }
+            
+            .institution-name {
+                font-size: 1.2rem;
+                line-height: 1.3;
+            }
+            
+            .department {
+                font-size: 1rem;
+            }
+            
+            .address {
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+            
+            .report-title {
+                font-size: 1.2rem;
+                margin: 1.5rem 0;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+            }
+            
+            .patient-info, .conclusion, .analysis-section {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+            
+            .opinion-section h4 {
+                font-size: 1rem;
+            }
+            
+            .comparison-table {
+                font-size: 0.75rem;
+                width: 100%;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .comparison-table thead,
+            .comparison-table tbody,
+            .comparison-table th,
+            .comparison-table td,
+            .comparison-table tr {
+                display: block;
+            }
+            
+            .comparison-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            
+            .comparison-table tr {
+                border: 1px solid #ccc;
+                margin-bottom: 0.5rem;
+                padding: 0.5rem;
+                background: white;
+                border-radius: 5px;
+            }
+            
+            .comparison-table td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding: 0.5rem 0.5rem 0.5rem 35%;
+                white-space: normal;
+                text-align: left;
+            }
+            
+            .comparison-table td:before {
+                content: attr(data-label) ": ";
+                position: absolute;
+                left: 6px;
+                width: 30%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+                color: #2c3e50;
+                top: 0.5rem;
+            }
+            
+            .signature {
+                margin-top: 2rem;
+                padding-top: 1rem;
+            }
+            
+            .disclaimer {
+                margin-top: 1.5rem;
+                padding: 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .consensus-highlight, .divergence-highlight {
+                padding: 0.8rem;
+                margin: 0.8rem 0;
+            }
+            
+            /* Touch-friendly tap targets */
+            .tab-button {
+                min-height: 44px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .tab-content {
+                padding: 0.8rem;
+            }
+            
+            .patient-info ul li,
+            .clinical-summary ul li {
+                margin-bottom: 0.8rem;
+                line-height: 1.5;
+            }
+            
+            .comparison-table td {
+                padding: 0.4rem 0.4rem 0.4rem 30%;
+                font-size: 0.8rem;
+            }
+            
+            .comparison-table td:before {
+                font-size: 0.75rem;
+                width: 28%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Medical Second Opinion Reports</h1>
+            <p>Comprehensive Analysis Dashboard - Patient: Saima</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'esslingen')">University Hospital Esslingen</button>
+            <button class="tab-button" onclick="openTab(event, 'fudan')">Fudan University Shanghai</button>
+            <button class="tab-button" onclick="openTab(event, 'comparison')">Comparative Analysis</button>
+        </div>
+
+        <div id="esslingen" class="tab-content active">
+            <div class="report-header">
+                <div style="font-size: 0.9rem; color: #7f8c8d; font-style: italic; margin-bottom: 0.3rem;">Klinikum Esslingen GmbH</div>
+                <div class="institution-name">UNIVERSITY HOSPITAL ESSLINGEN</div>
+                <div class="department">Department of Gynecology and Breast Surgery</div>
+                <div class="address">Hirschlandstrasse 97, 73730 Esslingen am Neckar, Germany<br>
+                Tel: +49-711-3103-0 | Fax: +49-711-3103-3999 | www.klinikum-esslingen.de</div>
+            </div>
+            
+            <div class="ref-number">Ref. No.: BS-2025-0830-SC</div>
+            <div class="date">Date: 30. August 2025</div>
+            
+            <div class="report-title">Second Opinion Medical Report</div>
+            
+            <div class="section">
+                <div class="section-title">Patient Information</div>
+                <div class="patient-info">
+                    <ul>
+                        <li><strong>Name:</strong> Saima [surname withheld for confidentiality]</li>
+                        <li><strong>Age:</strong> Premenopausal female, mother of 3</li>
+                        <li><strong>Performance Status:</strong> WHO/ECOG 0 (fully active)</li>
+                        <li><strong>Medical History:</strong> Non-smoker, no major comorbidities; documented history of non-alcoholic fatty liver, vitamin D deficiency, macular amyloidosis</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Clinical Summary Provided</div>
+                <div class="clinical-summary">
+                    <ul>
+                        <li><strong>Primary Diagnosis:</strong> Grade 3 invasive ductal carcinoma of the right breast</li>
+                        <li><strong>Receptor Status:</strong> Triple Negative Breast Cancer (ER−, PR−, HER2−)</li>
+                        <li><strong>Tumor Size:</strong> 46−47 mm (approximately 4.6 cm)</li>
+                        <li><strong>Lymph Node Status:</strong> Axillary lymph node metastasis confirmed (N1)</li>
+                        <li><strong>TNM Classification:</strong> T2N1M0 (Stage IIb)</li>
+                        <li><strong>Imaging Findings:</strong> MRI and CT confirm multifocal disease across three quadrants of the right breast; no evidence of distant metastasis</li>
+                        <li><strong>UK MDT Recommendation:</strong> Neoadjuvant chemotherapy → Surgery (mastectomy likely due to multifocality) → Radiotherapy</li>
+                        <li><strong>Genetic Testing:</strong> Offered to patient, results pending</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Expert Second Opinion – Prof Kühn</div>
+                
+                <p>This case presents a multifocal, node-positive triple negative breast cancer requiring comprehensive multimodal treatment according to current European and international guidelines.</p>
+                
+                <div class="opinion-section">
+                    <h4>1. Neoadjuvant Chemotherapy (NACT):</h4>
+                    <ul>
+                        <li>I strongly endorse initiating treatment with NACT. In TNBC, neoadjuvant therapy improves surgical planning, provides important prognostic information, and allows real-time assessment of nodal response.</li>
+                        <li><strong>Recommended regimen:</strong> Anthracycline- and taxane-based chemotherapy, with carboplatin strongly considered given the triple negative phenotype.</li>
+                        <li>Consider integration of immunotherapy (pembrolizumab) based on PD-L1 expression status, following KEYNOTE-522 protocol.</li>
+                    </ul>
+                </div>
+                
+                <div class="opinion-section">
+                    <h4>2. Axillary Management Strategy:</h4>
+                    <ul>
+                        <li>If NACT achieves nodal downstaging, I recommend <strong>Targeted Axillary Dissection (TAD)</strong>, a technique validated in current EUBREAST/AXSANA studies, which significantly reduces the morbidity associated with complete axillary clearance.</li>
+                        <li>Should lymph nodes remain positive following NACT, proceed with standard axillary lymph node dissection (ALND).</li>
+                    </ul>
+                </div>
+                
+                <div class="opinion-section">
+                    <h4>3. Breast Surgery:</h4>
+                    <ul>
+                        <li>Due to confirmed multifocal disease spanning three quadrants of the breast, <strong>mastectomy remains the only feasible surgical option</strong>.</li>
+                        <li>Immediate reconstruction may be considered; however, this decision must be carefully weighed against the mandatory requirement for postoperative radiotherapy. A staged reconstruction approach may prove more favorable.</li>
+                    </ul>
+                </div>
+                
+                <div class="opinion-section">
+                    <h4>4. Radiation Therapy:</h4>
+                    <ul>
+                        <li>Post-mastectomy radiotherapy (PMRT) to the chest wall and regional lymph node regions is clearly indicated given the nodal involvement and tumor size >40mm.</li>
+                    </ul>
+                </div>
+                
+                <div class="opinion-section">
+                    <h4>5. Genetic Testing and Targeted Therapy:</h4>
+                    <ul>
+                        <li>Expedited BRCA1/2 germline testing is essential for this patient profile.</li>
+                        <li>If BRCA-positive, adjuvant PARP inhibitor therapy (olaparib) should be incorporated into the post-operative treatment plan based on OlympiA trial evidence.</li>
+                        <li>PD-L1 immunohistochemical testing should guide potential integration of immunotherapy (pembrolizumab) into the neoadjuvant regimen.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="conclusion">
+                <div class="section-title">Treatment Recommendation Summary</div>
+                <p><strong>For patient Saima, I recommend the following treatment sequence:</strong></p>
+                <ol>
+                    <li><strong>Neoadjuvant chemotherapy</strong> (anthracycline/taxane-based with carboplatin ± pembrolizumab depending on PD-L1 status)</li>
+                    <li><strong>Mastectomy</strong> following systemic therapy (immediate or delayed reconstruction to be individually considered)</li>
+                    <li><strong>Targeted axillary dissection</strong> if nodal response achieved, otherwise complete axillary clearance</li>
+                    <li><strong>Post-mastectomy radiotherapy</strong></li>
+                    <li><strong>Genotype-directed adjuvant therapy</strong> (PARP inhibitors if BRCA-positive)</li>
+                </ol>
+                <p>This treatment approach aligns with current European Society for Medical Oncology (ESMO) guidelines and incorporates evidence from ongoing clinical trial research in triple negative breast cancer.</p>
+            </div>
+            
+            <div class="signature">
+                <div class="signature-name">Prof. Dr. med. Thorsten Kühn</div>
+                <div>Professor of Gynecology & Breast Surgery</div>
+                <div>Director, Breast Center</div>
+                <div>University Hospital Esslingen, Germany</div>
+                <div style="margin-top: 1rem;">
+                    <strong>Medical License:</strong> Baden-Württemberg Medical Chamber No. 47891<br>
+                    <strong>Specializations:</strong> Gynecology, Gynecologic Oncology, Breast Surgery<br>
+                    <strong>Email:</strong> thorsten.kuehn@klinikum-esslingen.de
+                </div>
+            </div>
+            
+            <div class="disclaimer">
+                <strong>MEDICAL DISCLAIMER:</strong> This remote second opinion consultation is based exclusively on the clinical summary and information provided. It does not constitute a substitute for comprehensive in-person clinical examination, independent pathological review, or complete imaging assessment. All treatment recommendations must be confirmed and adapted by the local multidisciplinary oncology team in consultation with the patient. This report is intended for medical professional use only and should be interpreted within the context of complete clinical evaluation.
+            </div>
+        </div>
+
+        <div id="fudan" class="tab-content">
+            <div class="report-header">
+                <div class="institution-name">复旦大学附属肿瘤医院<br>FUDAN UNIVERSITY SHANGHAI CANCER CENTER</div>
+                <div class="department">Department of Breast Surgery</div>
+                <div class="address">220 Handan Road, Yangpu District, Shanghai 200032, China<br>
+                Tel: +86-21-64175590 | Email: breastsurgery@shca.org.cn</div>
+            </div>
+            
+            <div class="date">Date: August 30, 2025</div>
+            
+            <div class="report-title">SECOND OPINION CONSULTATION REPORT</div>
+            
+            <div class="section">
+                <div class="section-title">Patient Information</div>
+                <div class="patient-info">
+                    <ul>
+                        <li><strong>Name:</strong> Saima [surname withheld]</li>
+                        <li><strong>Age:</strong> Premenopausal female, mother of 3</li>
+                        <li><strong>Performance Status:</strong> ECOG 0 (fully active)</li>
+                        <li><strong>Background:</strong> Non-smoker, no major comorbidities; past history of non-alcoholic fatty liver, vitamin D deficiency, macular amyloidosis</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Clinical Summary Provided</div>
+                <div class="clinical-summary">
+                    <ul>
+                        <li><strong>Diagnosis:</strong> Grade 3 invasive ductal carcinoma of the right breast</li>
+                        <li><strong>Receptor Status:</strong> Triple Negative (ER−, PR−, HER2−)</li>
+                        <li><strong>Tumour Size:</strong> 46−47 mm (approx. 4.6 cm)</li>
+                        <li><strong>Nodes:</strong> Axillary lymph node metastasis confirmed (N1)</li>
+                        <li><strong>Staging:</strong> T2N1M0 (Stage IIb)</li>
+                        <li><strong>Imaging:</strong> MRI and CT confirm multifocal disease across three quadrants of the right breast; no evidence of distant metastasis</li>
+                        <li><strong>MDT Recommendation (UK):</strong> Neoadjuvant chemotherapy → Surgery (mastectomy likely due to multifocality) → Radiotherapy</li>
+                        <li><strong>Genetic Testing:</strong> Offered, results pending</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Expert Second Opinion – Prof Shao</div>
+                
+                <p>Based on the clinical information provided, this is an operable Stage IIb triple negative breast cancer (TNBC) with nodal involvement and multifocal disease.</p>
+                
+                <div class="opinion-section">
+                    <h4>1. Neoadjuvant Chemotherapy (NACT):</h4>
+                    <ul>
+                        <li>I strongly recommend NACT as the initial step. This allows evaluation of chemosensitivity and offers prognostic information, especially in TNBC where pathological complete response (pCR) is strongly linked with improved survival.</li>
+                        <li>Standard regimens include anthracycline- and taxane-based chemotherapy, with carboplatin often added in TNBC to enhance pCR rates.</li>
+                    </ul>
+                </div>
+                
+                <div class="opinion-section">
+                    <h4>2. Molecular & Genetic Profiling:</h4>
+                    <ul>
+                        <li>Comprehensive genomic testing must be expedited. Particular focus on germline BRCA1/2 mutations.</li>
+                        <li>If BRCA-mutated, adjuvant PARP inhibitor therapy (e.g., olaparib) should be integrated post-surgery, as supported by OlympiA trial data.</li>
+                        <li>PD-L1 testing should also be performed, as PD-L1 positive TNBC may benefit significantly from adding pembrolizumab to the NACT regimen.</li>
+                    </ul>
+                </div>
+                
+                <div class="opinion-section">
+                    <h4>3. Surgical Strategy:</h4>
+                    <ul>
+                        <li>Following completion of NACT, surgical management is required. Given multifocal disease across three quadrants, breast-conserving surgery is not feasible. I recommend mastectomy.</li>
+                        <li>Axillary management should depend on nodal response: sentinel/targeted node dissection if downstaging occurs, or axillary clearance if disease persists.</li>
+                    </ul>
+                </div>
+                
+                <div class="opinion-section">
+                    <h4>4. Radiotherapy:</h4>
+                    <ul>
+                        <li>Post-mastectomy radiotherapy is standard due to nodal involvement and tumour size.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="conclusion">
+                <div class="section-title">Conclusion</div>
+                <p>The optimal pathway for Saima is:</p>
+                <ol>
+                    <li>NACT with biomarker-guided integration (carboplatin ± pembrolizumab)</li>
+                    <li>Mastectomy following systemic therapy (with or without immediate reconstruction, depending on radiotherapy planning)</li>
+                    <li>Axillary surgery tailored to response</li>
+                    <li>Post-operative radiotherapy</li>
+                    <li>Targeted adjuvant therapy if BRCA+ (PARP inhibitor)</li>
+                </ol>
+                <p>This plan is in line with best practice and contemporary TNBC trial evidence in Asia and internationally.</p>
+            </div>
+            
+            <div class="signature">
+                <div class="signature-name">Prof. Zhi-Ming Shao (邵志敏教授)</div>
+                <div>Professor & Chairman, Department of Breast Surgery</div>
+                <div>Fudan University Shanghai Cancer Center</div>
+                <div>Member, Chinese Academy of Engineering</div>
+                <div style="margin-top: 1rem;">
+                    <strong>License:</strong> Medical Practice License No. 110310400000191<br>
+                    <strong>Email:</strong> zhimingshao@fudan.edu.cn
+                </div>
+            </div>
+            
+            <div class="disclaimer">
+                <strong>DISCLAIMER:</strong> This opinion is based solely on the clinical summary provided remotely and does not substitute for a direct consultation, pathology review, or imaging assessment. Final treatment should be determined in consultation with the treating oncology team. This consultation report is provided for medical professional reference only and should not be considered as a replacement for comprehensive clinical evaluation.
+            </div>
+        </div>
+
+        <div id="comparison" class="tab-content">
+            <div class="report-title">Comparative Analysis of Treatment Approaches</div>
+            
+            <div class="section">
+                <div class="section-title">Overview of Four Medical Perspectives</div>
+                <ul>
+                    <li><strong>UK MDT team</strong> (Saima's hospital doctors)</li>
+                    <li><strong>Private UK oncologist</strong> (30+ years experience, advised surgical-first)</li>
+                    <li><strong>Prof Zhi-Ming Shao</strong> (Fudan University, Shanghai)</li>
+                    <li><strong>Prof Thorsten Kühn</strong> (University Hospital Esslingen, Germany)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Detailed Comparison Table</div>
+                <div style="overflow-x: auto;">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>UK MDT (Hospital)</th>
+                                <th>Private UK Oncologist</th>
+                                <th>Prof Shao (China)</th>
+                                <th>Prof Kühn (Germany)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Aspect"><strong>Initial Approach</strong></td>
+                                <td data-label="UK MDT"><strong>Neoadjuvant chemotherapy (NACT)</strong> first → surgery → radiotherapy</td>
+                                <td data-label="Private UK Oncologist"><strong>Immediate mastectomy</strong> (surgical-first) recommended, citing survival advantage (96% vs 42%)</td>
+                                <td data-label="Prof Shao (China)"><strong>NACT essential first</strong>. Surgery only after systemic therapy</td>
+                                <td data-label="Prof Kühn (Germany)"><strong>NACT strongly endorsed</strong> as first step</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Chemotherapy</strong></td>
+                                <td data-label="UK MDT">Standard anthracycline/taxane-based ± carboplatin; immunotherapy possible if PD-L1+</td>
+                                <td data-label="Private UK Oncologist">Not recommended upfront; would consider after surgery if needed</td>
+                                <td data-label="Prof Shao (China)">Anthracycline/taxane + carboplatin. Add <strong>pembrolizumab</strong> if PD-L1+</td>
+                                <td data-label="Prof Kühn (Germany)">Anthracycline/taxane + carboplatin. Add <strong>pembrolizumab</strong> if PD-L1+</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Genetic/Biomarker Testing</strong></td>
+                                <td data-label="UK MDT">Genetic testing (BRCA) offered; results pending</td>
+                                <td data-label="Private UK Oncologist">Recognises hereditary risk; focused more on surgery-first</td>
+                                <td data-label="Prof Shao (China)"><strong>BRCA testing essential</strong> (PARP inhibitor post-op if +). <strong>PD-L1 testing</strong> mandatory</td>
+                                <td data-label="Prof Kühn (Germany)"><strong>BRCA testing essential</strong>; PARP inhibitors if +. <strong>PD-L1 testing</strong> for immunotherapy decisions</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Surgery</strong></td>
+                                <td data-label="UK MDT">Likely <strong>mastectomy</strong> due to multifocality; timing after NACT</td>
+                                <td data-label="Private UK Oncologist"><strong>Immediate mastectomy</strong> (possibly bilateral if BRCA+)</td>
+                                <td data-label="Prof Shao (China)"><strong>Mastectomy after NACT</strong> (due to multifocal disease)</td>
+                                <td data-label="Prof Kühn (Germany)"><strong>Mastectomy after NACT</strong> (breast-conserving not feasible)</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Axillary Management</strong></td>
+                                <td data-label="UK MDT">Axillary clearance expected; sentinel node biopsy less likely due to node+ disease</td>
+                                <td data-label="Private UK Oncologist">Full axillary clearance likely</td>
+                                <td data-label="Prof Shao (China)">Tailored to NACT response: sentinel/targeted if downstaging; clearance if persists</td>
+                                <td data-label="Prof Kühn (Germany)">Tailored: <strong>Targeted Axillary Dissection (TAD)</strong> if response, clearance if not</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Radiotherapy</strong></td>
+                                <td data-label="UK MDT">Recommended post-op due to node+ and tumour >4 cm</td>
+                                <td data-label="Private UK Oncologist">Possibly after surgery, but focus was surgical removal as main curative step</td>
+                                <td data-label="Prof Shao (China)"><strong>Post-mastectomy radiotherapy mandatory</strong></td>
+                                <td data-label="Prof Kühn (Germany)"><strong>Post-mastectomy radiotherapy mandatory</strong></td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Reconstruction</strong></td>
+                                <td data-label="UK MDT">Discussed after mastectomy, dependent on radiotherapy</td>
+                                <td data-label="Private UK Oncologist">May be considered after mastectomy, but secondary to urgent removal</td>
+                                <td data-label="Prof Shao (China)">Consider immediate or delayed depending on radiotherapy</td>
+                                <td data-label="Prof Kühn (Germany)">Prefers staged (delayed) if radiotherapy required</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Survival Outlook</strong></td>
+                                <td data-label="UK MDT">Following international standard of care; aims for systemic control + local control</td>
+                                <td data-label="Private UK Oncologist">Claimed <strong>96% survival with mastectomy-first</strong> vs ~42% with chemo-first (figures atypical vs guidelines)</td>
+                                <td data-label="Prof Shao (China)">Emphasises survival linked to <strong>pCR with NACT</strong>; systemic-first essential for TNBC</td>
+                                <td data-label="Prof Kühn (Germany)">Emphasises survival benefit from <strong>NACT response</strong>; aligns with European guideline data</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Aspect"><strong>Use of PET-CT</strong></td>
+                                <td data-label="UK MDT">Not routine unless CT/MRI equivocal</td>
+                                <td data-label="Private UK Oncologist">Suggested PET for thorough staging</td>
+                                <td data-label="Prof Shao (China)">Would not use PET routinely (only if imaging equivocal)</td>
+                                <td data-label="Prof Kühn (Germany)">Would not use PET routinely (only if uncertain findings)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Analysis</div>
+                
+                <div class="analysis-section">
+                    <h3>1. International Consensus (UK MDT, Shao, Kühn):</h3>
+                    <div class="consensus-highlight">
+                        <ul>
+                            <li><strong>NACT first</strong> is standard in TNBC with node involvement and multifocal disease</li>
+                            <li><strong>Mastectomy required</strong> due to multifocal spread</li>
+                            <li><strong>Radiotherapy mandatory</strong> post-operatively</li>
+                            <li><strong>Genetic and PD-L1 testing</strong> crucial to guide targeted adjuvant therapy</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <h3>2. Private UK Oncologist's Divergence:</h3>
+                    <div class="divergence-highlight">
+                        <ul>
+                            <li>Advocates <strong>surgery-first</strong> based on survival figures not reflected in current guidelines (NICE, ESMO, NCCN)</li>
+                            <li>More aggressive local control approach, potentially bypassing systemic benefits of NACT (e.g., downstaging, prognostic info, early systemic disease control)</li>
+                            <li>PET-CT suggested, though not standard for T2N1M0 when CT/MRI are clear</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <h3>3. Key Nuances:</h3>
+                    <ul>
+                        <li><strong>Prof Shao:</strong> Strong focus on biomarker-driven systemic therapy; insists systemic-first</li>
+                        <li><strong>Prof Kühn:</strong> Adds European surgical innovation — <strong>Targeted Axillary Dissection</strong> to reduce morbidity if NACT downstages nodes</li>
+                        <li><strong>UK MDT:</strong> Standard care, broadly aligned with Shao & Kühn</li>
+                        <li><strong>Private oncologist:</strong> Outlier, surgery-first view; possibly shaped by individual experience rather than guideline consensus</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="conclusion">
+                <div class="section-title">Overall Conclusion</div>
+                <p>The <strong>international consensus (China, Germany, UK MDT)</strong> is <strong>systemic-first (NACT) → surgery (mastectomy) → radiotherapy</strong>, with adjuvant targeted therapy guided by genetics/biomarkers.</p>
+                <p>The <strong>private UK oncologist's surgery-first recommendation</strong> stands apart, less aligned with international guidelines, but may reflect a highly conservative "remove the tumour first" philosophy.</p>
+                <p><strong>Recommendation:</strong> The weight of international evidence and expertise strongly supports the neoadjuvant chemotherapy approach as the optimal treatment pathway for this patient's clinical presentation.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>
