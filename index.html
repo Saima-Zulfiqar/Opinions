@@ -471,12 +471,154 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="openTab(event, 'esslingen')">University Hospital Esslingen</button>
+            <button class="tab-button active" onclick="openTab(event, 'action-plan')">MDT Action Plan</button>
+            <button class="tab-button" onclick="openTab(event, 'esslingen')">University Hospital Esslingen</button>
             <button class="tab-button" onclick="openTab(event, 'fudan')">Fudan University Shanghai</button>
             <button class="tab-button" onclick="openTab(event, 'comparison')">Comparative Analysis</button>
         </div>
 
-        <div id="esslingen" class="tab-content active">
+        <div id="action-plan" class="tab-content active">
+            <div class="report-title">MDT Appointment Action Plan - Monday 13:00</div>
+            
+            <div class="section">
+                <div class="section-title">Goals for Tomorrow's Meeting</div>
+                <div class="patient-info">
+                    <ul>
+                        <li><strong>Primary:</strong> Ensure genetic testing continues immediately</li>
+                        <li><strong>Secondary:</strong> Secure an NHS referral to The Royal Marsden</li>
+                        <li><strong>Maintain:</strong> Respectful, collaborative tone throughout</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Opening Statement</div>
+                <div style="background: #e8f6f3; padding: 1rem; border-left: 4px solid #27ae60; border-radius: 5px;">
+                    <p><em>"We appreciate the MDT's work and the time you've taken to review Saima's case."</em></p>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Key Questions to Ask</div>
+                
+                <div class="opinion-section">
+                    <h4>A. About Genetic Testing:</h4>
+                    <ul>
+                        <li>"Can you confirm that Saima's genetic (BRCA) testing is being actioned now and when we will get the results?"</li>
+                        <li>"Will the results be automatically shared with The Royal Marsden if we are referred?"</li>
+                        <li>"If testing takes longer than treatment planning, can treatment start while results are pending?"</li>
+                    </ul>
+                </div>
+
+                <div class="opinion-section">
+                    <h4>B. About Treatment Plan:</h4>
+                    <ul>
+                        <li>"We understand your recommendation is NACT followed by mastectomy and radiotherapy. Can you confirm whether immunotherapy (pembrolizumab) will be included if PD-L1 is positive?"</li>
+                        <li>"If Saima is BRCA-positive, how will adjuvant PARP inhibitor therapy (like olaparib) be built into the plan?"</li>
+                    </ul>
+                </div>
+
+                <div class="opinion-section">
+                    <h4>C. About Referral to Royal Marsden:</h4>
+                    <ul>
+                        <li>"Given Saima's age, TNBC biology, multifocal disease, and suspected hereditary risk, we would like her care coordinated at The Royal Marsden via NHS referral. What is the process to make this referral today?"</li>
+                        <li>"Can the referral be submitted in parallel while treatment preparation continues here?"</li>
+                        <li>"How quickly can she be seen at The Royal Marsden under NHS once you submit the referral?"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Potential Pushback & Response Strategy</div>
+                
+                <div style="overflow-x: auto;">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Potential Pushback</th>
+                                <th>Likely MDT Reasoning</th>
+                                <th>Your Response</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Potential Pushback">"We can deliver the same treatment locally."</td>
+                                <td data-label="Likely MDT Reasoning">They feel NACT + mastectomy is standardised.</td>
+                                <td data-label="Your Response">"We respect that, but The Royal Marsden is a national centre of excellence for TNBC and BRCA-related breast cancer. We'd like Saima under their MDT for oversight and trial access."</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Potential Pushback">"Referral will cause delays."</td>
+                                <td data-label="Likely MDT Reasoning">Concern referral slows start of treatment.</td>
+                                <td data-label="Your Response">"We ask that genetic testing and baseline workup continue immediately here while the referral is arranged. We want both to run in parallel."</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Potential Pushback">"Marsden may repeat tests."</td>
+                                <td data-label="Likely MDT Reasoning">Duplicate imaging/pathology slows things.</td>
+                                <td data-label="Your Response">"We understand, but that is a small price for ensuring care under the UK's leading TNBC team. Repeating scans is preferable to losing specialist oversight."</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Potential Pushback">"We only refer if treatment fails."</td>
+                                <td data-label="Likely MDT Reasoning">Some centres escalate only on relapse.</td>
+                                <td data-label="Your Response">"NHS Cancer Strategy supports patient choice and escalation for complex cases. Saima's TNBC with multifocality and likely BRCA mutation qualifies as complex and warrants tertiary centre management upfront."</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Potential Pushback">"It's the same NHS system."</td>
+                                <td data-label="Likely MDT Reasoning">They suggest Marsden won't add anything.</td>
+                                <td data-label="Your Response">"Marsden leads clinical trials and genetic-oncology integration for TNBC. That specialist expertise is exactly what we want for Saima."</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">NHS Patient Rights (Legal Backup)</div>
+                
+                <div class="analysis-section">
+                    <h4>Key Legal Points if Resistance Persists:</h4>
+                    <div class="consensus-highlight">
+                        <ul>
+                            <li><strong>Right to Referral/Second Opinion:</strong> Under the NHS Constitution, patients have the right to a second opinion or referral to a different NHS hospital/consultant if there is "reasonable clinical need."</li>
+                            <li><strong>Right to Choice of Provider:</strong> NHS Constitution and NHS England guidance give patients the legal right to choose which hospital and consultant-led team they are referred to for their first outpatient appointment.</li>
+                            <li><strong>National Cancer Strategy:</strong> NICE guidance emphasises patient-centred care and the right to be treated at a specialist centre for rare or high-risk cancers.</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #f0f8ff; padding: 1rem; border-left: 4px solid #3498db; margin: 1rem 0;">
+                        <p><strong>If needed, calmly state:</strong></p>
+                        <p><em>"Under the NHS Constitution we have the right to be referred to another NHS consultant-led team, and The Royal Marsden is a recognised NHS cancer referral centre. We ask you to please respect this right and initiate the urgent referral today."</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Closing the Meeting</div>
+                
+                <div class="opinion-section">
+                    <h4>Re-state Clearly:</h4>
+                    <p>"To summarise, we'd like confirmation that genetic testing is happening now, and that you will submit an urgent referral to The Royal Marsden via NHS today."</p>
+                </div>
+
+                <div class="opinion-section">
+                    <h4>Ask for Documentation:</h4>
+                    <p>"Can we have that documented in the clinic notes and copied to us in writing?"</p>
+                </div>
+            </div>
+
+            <div class="conclusion">
+                <div class="section-title">Summary Checklist</div>
+                <ol>
+                    <li>✅ <strong>Acknowledge MDT plan</strong></li>
+                    <li>✅ <strong>Confirm genetic testing is underway</strong></li>
+                    <li>✅ <strong>Ask about immunotherapy & PARP inhibitors</strong></li>
+                    <li>✅ <strong>Request urgent referral to Royal Marsden NHS</strong></li>
+                    <li>✅ <strong>Anticipate objections</strong> → respond calmly with rights + clinical rationale</li>
+                    <li>✅ <strong>Get commitment in writing</strong> (notes or letter)</li>
+                </ol>
+            </div>
+        </div>
+
+        <div id="esslingen" class="tab-content">
             <div class="report-header">
                 <div style="font-size: 0.9rem; color: #7f8c8d; font-style: italic; margin-bottom: 0.3rem;">Klinikum Esslingen GmbH</div>
                 <div class="institution-name">UNIVERSITY HOSPITAL ESSLINGEN</div>
